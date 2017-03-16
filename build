@@ -804,7 +804,7 @@ _binpatch() {
 	# Don't suffer from NIH; use LD_PRELOAD to override calls to /usr paths
 	if [ ! -z "${_union}" ] ; then
 		mkdir -p usr/src/
-		wget -q "https://raw.githubusercontent.com/mikix/deb2snap/master/src/preload.c" -O - | \
+		cat "$guidanceDir"/preload.c | \
 		sed -e 's|SNAPPY|UNION|g' | sed -e 's|SNAPP|UNION|g' | sed  -e 's|SNAP|UNION|g' | \
 		sed -e 's|snappy|union|g' > usr/src/libunionpreload.c
 		gcc -shared -fPIC usr/src/libunionpreload.c -o libunionpreload.so -ldl -DUNION_LIBNAME=\"libunionpreload.so\"
