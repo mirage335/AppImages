@@ -875,6 +875,7 @@ _generate_type2_appimage() {
 	
 	cd "$scriptAbsoluteFolder"
 }
+alias generate_type2_appimage='_generate_type2_appimage'
 
 
 
