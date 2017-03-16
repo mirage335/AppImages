@@ -15,10 +15,13 @@ There are [multiple ways](https://github.com/probonopd/AppImageKit/wiki/Creating
 To build an AppImage from a `.yml` description file:
 
 ```
-cd recipes/meta/ && bash -ex ./Recipe XXX.yml
+./build _setup
+./build ./recipes/App/App.yml
 ```
 
 `.yml` description files tell the recipe where to get the ingredients from, and how to convert them to an AppImage (besides the general steps already included in the meta recipe). Study some [examples](https://github.com/probonopd/AppImages/tree/master/recipes/meta) to see how it works.
+
+When necessary it is also possible to overload any function/variable in the build script using an "ops" shell script in the same directory as the `.yml` configuration, or the build script itself. It is also possible to directly use shell script formatted configuraton files instead of `.yml`. Further, there is no requirement that the configuration file be in any particular directory, though some resources may be created under the script's directory.
 
 ## Motivation
 

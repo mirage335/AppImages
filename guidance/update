@@ -1,0 +1,23 @@
+#!/bin/bash
+#Alternative to "git submodule" and "git pull" .
+
+
+wget -c https://github.com/probonopd/AppImageKit/releases/download/6/AppRun_6-x86_64 -O AppRun
+chmod u+x AppRun
+
+wget -c "https://github.com/probonopd/AppImageKit/releases/download/6/AppImageAssistant_6-x86_64.AppImage" -O  AppImageAssistant
+chmod u+x AppImageAssistant
+
+URL="https://github.com/probonopd/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
+wget -c "$URL" -O appimagetool
+chmod u+x appimagetool
+
+wget -q -c "https://github.com/probonopd/AppImages/raw/master/excludedeblist"
+
+wget -q "https://raw.githubusercontent.com/mikix/deb2snap/master/src/preload.c"
+
+wget https://github.com/probonopd/AppImages/raw/master/excludelist
+
+wget https://raw.githubusercontent.com/probonopd/AppImageKit/master/desktopintegration
+chmod u+x desktopintegration
+

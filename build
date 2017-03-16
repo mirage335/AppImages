@@ -1,0 +1,1130 @@
+#!/bin/bash
+
+#####Utilities.
+#Retrieves absolute path of current script, while maintaining symlinks, even when "./" would translate with "readlink -f" into something disregarding symlinked components in $PWD.
+#However, will dereference symlinks IF the script location itself is a symlink. This is to allow symlinking to scripts to function normally.
+#Suitable for allowing scripts to find other scripts they depend on. May look like an ugly hack, but it has proven reliable over the years.
+_getScriptAbsoluteLocation() {
+	local absoluteLocation
+	if [[ (-e $PWD\/$0) && ($0 != "") ]]
+			then
+	absoluteLocation="$PWD"\/"$0"
+	absoluteLocation=$(realpath -s "$absoluteLocation")
+			else
+	absoluteLocation="$0"
+	fi
+
+	if [[ -h "$absoluteLocation" ]]
+			then
+	absoluteLocation=$(readlink -f "$absoluteLocation")
+	fi
+
+	echo $absoluteLocation
+}
+
+
+#Suitable for allowing scripts to find other scripts they depend on.
+_getScriptAbsoluteFolder() {
+	dirname "$(_getScriptAbsoluteLocation)"
+}
+
+#Retrieves absolute path of parameter, while maintaining symlinks, even when "./" would translate with "readlink -f" into something disregarding symlinked components in $PWD.
+#Suitable for finding absolute paths, when it is desirable not to interfere with symlink specified folder structure.
+_getAbsoluteLocation() {
+	local absoluteLocation
+	if [[ (-e $PWD\/$1) && ($1 != "") ]]
+			then
+	absoluteLocation="$PWD"\/"$1"
+	absoluteLocation=$(realpath -s "$absoluteLocation")
+			else
+	absoluteLocation="$1"
+	fi
+	echo $absoluteLocation
+}
+
+#Retrieves absolute path of parameter, while maintaining symlinks, even when "./" would translate with "readlink -f" into something disregarding symlinked components in $PWD.
+#Suitable for finding absolute paths, when it is desirable not to interfere with symlink specified folder structure.
+_getAbsoluteFolder() {
+	local absoluteLocation=$(_getAbsoluteLocation "$1")
+	dirname "$absoluteLocation"
+}
+
+#http://stackoverflow.com/questions/687948/timeout-a-command-in-bash-without-unnecessary-delay
+_timeout() { ( set +b; sleep "$1" & "${@:2}" & wait -n; r=$?; kill -9 `jobs -p`; exit $r; ) }
+
+_checkDep() {
+	type "$1" >/dev/null 2>&1 || ( echo "$1" missing && _stop 1 )
+}
+
+#Portable sanity checked "rm -r" command.
+#"$1" == directory to remove
+_safeRMR() {
+	
+	#if [[ ! -e "$0" ]]
+	#then
+	#	return 1
+	#fi
+	
+	if [[ "$1" == "" ]]
+	then
+		return 1
+	fi
+	
+	if [[ "$1" == "/" ]]
+	then
+		return 1
+	fi
+	
+	#Blacklist.
+	[[ "$1" == "/home" ]] && return 1
+	[[ "$1" == "/home/" ]] && return 1
+	[[ "$1" == "/home/$USER" ]] && return 1
+	[[ "$1" == "/home/$USER/" ]] && return 1
+	[[ "$1" == "/$USER" ]] && return 1
+	[[ "$1" == "/$USER/" ]] && return 1
+	
+	[[ "$1" == "/tmp" ]] && return 1
+	[[ "$1" == "/tmp/" ]] && return 1
+	
+	#Whitelist.
+	local safeToRM=false
+	
+	local safeScriptAbsoluteFolder="$_getScriptAbsoluteFolder"
+	
+	[[ "$1" == "./"* ]] && [[ "$PWD" == "$safeScriptAbsoluteFolder"* ]] && safeToRM="true"
+	
+	[[ "$1" == "$safeScriptAbsoluteFolder"* ]] && safeToRM="true"
+	
+	#[[ "$1" == "/home/$USER"* ]] && safeToRM="true"
+	[[ "$1" == "/tmp/"* ]] && safeToRM="true"
+	
+	[[ "$safeToRM" == "false" ]] && return 1
+	
+	#Safeguards/
+	[[ -d "$1" ]] && find "$1" | grep -i '\.git$' >/dev/null 2>&1 && return 1
+	
+	#Validate necessary tools were available for path building and checks.
+	_checkDep realpath
+	_checkDep readlink
+	_checkDep dirname
+	_checkDep basename
+	
+	if [[ -e "$1" ]]
+	then
+		#sleep 0
+		#echo "$1"
+		rm -rf "$1"
+	fi
+}
+
+#Generates random alphanumeric characters, default length 18.
+_uid() {
+	local uidLength
+	[[ -z "$1" ]] && uidLength=18 || uidLength="$1"
+	
+	cat /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c "$uidLength"
+}
+
+# Function to parse yaml into shell script variables.
+# https://gist.github.com/epiloque/8cf512c6d64641bde388
+# based on https://gist.github.com/pkuczynski/8665367
+_parse_yaml() {
+    local prefix=$2
+    local s
+    local w
+    local fs
+    s='[[:space:]]*'
+    w='[a-zA-Z0-9_]*'
+    fs="$(echo @|tr @ '\034')"
+    sed -ne "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
+        -e "s|^\($s\)\($w\)$s[:-]$s\(.*\)$s\$|\1$fs\2$fs\3|p" "$1" |
+    awk -F"$fs" '{
+    indent = length($1)/2;
+    vname[indent] = $2;
+    for (i in vname) {if (i > indent) {delete vname[i]}}
+        if (length($3) > 0) {
+            vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
+            printf("%s%s%s=('\''%s'\'')\n", "'"$prefix"'",vn, $2, $3);
+        }
+    }' | sed 's/_=/+=/g'
+}
+
+
+#Converts yaml into shell script.
+#"$1" == inyamlfile
+#"$2" == outshellfile
+#"$3" == variable name prefix (optional, default _, false to disable)
+#"$4" == additional parse_yaml parameters (optional)
+_convert_yaml() {
+	# Read yaml file
+	#_parse_yaml "$1" "_"
+	
+	#eval $(_parse_yaml "$1" "_")
+	
+	local inyamlfile="$1"
+	local outshellfile="$2"
+	
+	local variableNamePrefix
+	variableNamePrefix="$3"
+	
+	if [[ "$variableNamePrefix" == "" ]]
+	then
+		variableNamePrefix="_"
+	fi
+	
+	if [[ "$variableNamePrefix" == "false" ]]
+	then
+		variableNamePrefix=""
+	fi
+	
+	shift
+	shift
+	shift
+	
+	_parse_yaml "$inyamlfile" "$variableNamePrefix" "$@"
+	
+}
+
+#Gets filename extension.
+#"$1" == filename
+_getExt() {
+	echo "$1" | tr -dc 'a-zA-Z0-9.' | tr '[:upper:]' '[:lower:]' | tail -c 4
+}
+
+#Converts files of various formats containing shell script variables, into a shell script.
+#"$1" == infile
+#"$2" == formatSpec (optional, default from file extension)
+_convert_any() {
+	local infile
+	infile="$1"
+	
+	local formatSpec
+	formatSpec="$2"
+	
+	if [[ -z "$formatSpec" ]]
+	then
+		formatSpec=$(_getExt "$infile")
+	fi
+	
+	
+	if [[ "$formatSpec" == ".yml" ]]
+	then
+		_convert_yaml "$infile"
+		return 0
+	fi
+	
+	cat "$infile"
+	
+} 
+
+
+#####Global variables.
+export sessionid=$(_uid)
+export scriptAbsoluteLocation=$(_getScriptAbsoluteLocation)
+export scriptAbsoluteFolder=$(_getScriptAbsoluteFolder)
+
+#Temporary directories.
+export safeTmp="$scriptAbsoluteFolder"/aiw_"$sessionid"
+export logTmp="$safeTmp"/log
+export shortTmp=/tmp/aiw_"$sessionid"	#Solely for misbehaved applications called upon.
+
+#Monolithic shared files.
+export importFile="$logTmp"/import
+
+#Resource directories.
+export guidanceDir="$scriptAbsoluteFolder"/guidance
+
+
+#####Local Environment Management
+
+_prepare() {
+	
+	mkdir -p "$safeTmp"
+	
+	mkdir -p "$shortTmp"
+	
+	mkdir -p "$logTmp"
+}
+
+_start() {
+	
+	#Annoying! Instrument the code instead!
+	#set -e
+	#set -x
+	
+	_prepare
+	
+	
+}
+
+_stop() {
+	
+	_safeRMR "$safeTmp"
+	_safeRMR "$shortTmp"
+	
+	#Broken.
+	if [[ "$1" != "" ]]
+	then
+		exit "$1"
+	else
+		exit 0
+	fi
+}
+
+
+#Traps
+trap 'excode=$?; _stop; trap - EXIT; echo $excode' EXIT HUP INT QUIT PIPE TERM		# reset
+trap 'excode=$?; trap "" EXIT; _stop; echo $excode' EXIT HUP INT QUIT PIPE TERM		# ignore
+
+#####Installation functions.
+_test() {
+	_start
+	
+	echo -e -n '\E[1;32;46m Dependency checking...	\E[0m'
+	
+	# Check dependencies
+	_checkDep wget
+	_checkDep grep
+	_checkDep sed
+	_checkDep awk
+	_checkDep cut
+	_checkDep head
+	_checkDep tail
+	
+	
+	_checkDep realpath
+	_checkDep readlink
+	_checkDep dirname
+	
+	_checkDep sleep
+	_checkDep wait
+	_checkDep kill
+	_checkDep jobs
+	_checkDep exit
+	
+	_checkDep env
+	_checkDep bash
+	_checkDep echo
+	_checkDep cat
+	_checkDep type
+	_checkDep mkdir
+	_checkDep trap
+	_checkDep return
+	_checkDep set
+	
+	_checkDep rm
+	
+	_checkDep dpkg
+	_checkDep apt
+	
+	
+	[[ -e /dev/urandom ]] || echo /dev/urandom missing _stop
+	
+	echo "PASS"
+	
+	echo -e '\E[1;32;46m ENTER to continue.	\E[0m'
+	read
+	
+	_stop
+	
+}
+
+
+_setup() {
+	_start
+	
+	"$scriptAbsoluteLocation" _test
+	
+	_stop
+}
+
+
+#####Program functions.
+
+
+
+## APT Debian/Drivative Ops
+
+# Lightweight bash-only dpkg-scanpackages replacement. Operates in current directory, outputs absolute paths.
+_scanpackages() {
+	ls *.deb 1> /dev/null 2>&1 || return	#
+	
+	for deb in *.deb ; do
+		local debFilename
+		debFilename=$(_getAbsoluteLocation -f "$deb")
+		local debMD5
+		debMD5=$(md5sum -b "$deb" | cut -d' ' -f1)
+		local debSHA1
+		debSHA1=$(sha1sum -b "$deb" | cut -d' ' -f1)
+		local debSHA256
+		debSHA256=$(sha256sum -b "$deb" | cut -d' ' -f1)
+		
+		dpkg -I "$deb" | sed 's/^ *//g' | grep -i -E '(package|version|installed-size|architecture|depends|priority):'
+		echo "Filename: $debFilename"
+		echo "MD5sum: $debMD5"
+		echo "SHA1: $debSHA1"
+		echo "SHA256: $debSHA256"
+		echo
+	done
+}
+alias scanpackages='_scanpackages'
+
+#Checks whether an APT based distribution has been selected by _ingredients_dist .
+# Prerequsites: _collectRecipe
+_checkDistAPT() {
+	# TODO Should filter for only APT based distros.
+	if [[ -z "${_ingredients_dist}" ]]
+	then
+		return 1
+	fi
+	
+	return 0
+}
+
+# Prerequsites: _collectAppDir _collectAPT
+_preserveAPT() {
+	cp "$aptStatusFile" "$aptSourcesList" "$appBuild"/
+}
+
+# Generate status file for use by apt-get; assuming that the recipe uses no newer
+# ingredients than what would require more recent dependencies than what we assume 
+# to be part of the base system
+# Prerequsites: _collectAPT
+_excludeToAPTstatus() {
+	for PACKAGE in $(cat "$guidanceDir"/excludedeblist | cut -d "#" -f 1) ; do
+		printf "Package: $PACKAGE\nStatus: install ok installed\nArchitecture: all\nVersion: 9:999.999.999\n\n" >> "$aptStatusFile"
+	done
+	
+}
+alias _generate_status='_excludeToAPTstatus'
+	
+	
+	
+	
+alias generate_status='_excludeToAPTstatus'
+
+# Generates complete status file for use by apt-get.
+# Prerequsites: _excludeToAPTstatus _collectRecipe
+_fullAPTstatus() {
+	
+	_checkDistAPT || return 1
+	
+	_excludeToAPTstatus
+	
+	
+	# Some packages depend on packages which we do not want to bundle,
+	# in addition to the global excludes defined in excludedeblist.
+	# Use
+	# ingredients:
+	#   exclude:
+	#     - packagename
+	if [ ! -z "${_ingredients_exclude[0]}" ] ; then
+		for PACKAGE in "${_ingredients_exclude[@]}" ; do
+			printf "Package: $PACKAGE\nStatus: install ok installed\nArchitecture: all\nVersion: 9:999.999.999\n\n" >> "$aptStatusFile"
+		done
+	fi
+	
+	# Some packages depend on an exact version of a dependency to be installed.
+	# Use
+	# ingredients:
+	#   pretend:
+	#     - packagename version_to_be_pretended
+	if [ ! -z "${_ingredients_pretend[0]}" ] ; then
+		for PRETEND in "${_ingredients_pretend[@]}" ; do
+			P_PKG=$(echo "$PRETEND" | cut -d " " -f 1)
+			P_VER=$(echo "$PRETEND" | cut -d " " -f 2)
+			cat "$aptStatusFile" | tr '\n' '@' | sed -e 's|@@|\n\n|g' | sed -e 's|Package: '"$P_PKG"'@Status: install ok installed@Architecture: all@Version: 9:999.999.999|Package: '"$P_PKG"'@Status: install ok installed@Architecture: all@Version: '"$P_VER"'|g' | sed -e 's|@|\n|g' > "$aptStatusFile".temp
+			mv "$aptStatusFile".temp status
+		done
+	fi
+
+	
+	
+	
+}
+
+
+# Prerequsites: _collectAPT _collectRecipe
+_remoteAPTsources() {
+	
+	_checkDistAPT || return 1
+	
+	for SOURCE in "${_ingredients_sources[@]}" ; do
+		echo "${SOURCE}" >> "$aptSourcesList"
+	done
+	for PPA in "${_ingredients_ppas[@]}" ; do
+		echo "deb http://ppa.launchpad.net/${PPA}/ubuntu ${_ingredients_dist} main" >> "$aptSourcesList"
+	done
+	
+	
+}
+
+
+# Prerequsites: _collectAppDir _collectRecipe
+_fetchDEBs() {
+	
+	_checkDistAPT || return 1
+	
+	#Some deb files may be provided from GitHub.
+	if [ ! -z "${_ingredients_ghreleases[0]}" ] ; then
+		for GHREPO in "${_ingredients_ghreleases[@]}" ; do
+			wget -q "https://github.com/${GHREPO}/releases/" -O "$safeTmp"/gh-release.html
+			DEB=$(cat "$safeTmp"/gh-release.html | grep ".deb" | grep x86_64 | head -n 1 | cut -d '"' -f 2)
+			
+			if [ -z "$DEB" ] ; then
+				DEB=$(cat "$safeTmp"/gh-release.html | grep ".deb" | grep amd64 | head -n 1 | cut -d '"' -f 2)
+			fi
+			
+			if [ -z "$DEB" ] ; then
+				DEB=$(cat "$safeTmp"/gh-release.html | grep ".deb" | grep x64 | head -n 1 | cut -d '"' -f 2)
+			fi
+			
+			if [ -z "$DEB" ] ; then
+				DEB=$(cat "$safeTmp"/gh-release.html | grep ".deb" | grep linux64 | head -n 1 | cut -d '"' -f 2)
+			fi
+			
+			rm "$safeTmp"/gh-release.html
+			
+			cd "$appBuild"
+			wget -c "https://github.com/${DEB}"
+			cd "$scriptAbsoluteFolder"
+			
+		done
+	fi
+	
+	# Some projects provide raw .deb files without a repository
+	# hence we create our own local repository as part of
+	# the AppImage creation process in order to "install"
+	# the package using apt-get as normal
+	if [ ! -z "${_ingredients_debs[0]}" ] ; then
+		for DEB in "${_ingredients_debs[@]}" ; do
+			if [ ! -f $(basename "$DEB") ] ; then
+				cd "$appBuild"
+				wget -c $DEB
+				cd "$scriptAbsoluteFolder"
+			fi
+		done
+	fi
+	
+}
+
+# Prerequsites: _collectAppDir _collectAPT
+_localAPTsources() {
+	
+	_checkDistAPT || return 1
+	
+	cd "$appBuild"
+	_scanpackages | gzip -9c > Packages.gz
+	cd "$scriptAbsoluteFolder"
+	
+	echo "deb file:""$appBuild"" ./" >> "$aptSourcesList"
+	
+	
+}
+
+# Prerequsites: _collectAppDir _collectAPT _collectRecipe
+_fetchAPT() {
+	
+	_checkDistAPT || return 1
+	
+	
+	INSTALL=$_lowerapp
+	if [ ! -z "${_ingredients_package}" ] ; then
+		INSTALL="${_ingredients_package}"
+	fi
+	if [ ! -z "${_ingredients_packages}" ] ; then
+		INSTALL=""
+	fi
+
+	# If packages are specifically listed, only install these, not a package with the name of the app
+	if [ ! -z "${_ingredients_packages[0]}" ] ; then
+		INSTALL=${_ingredients_packages[@]}
+	fi
+
+	apt-get $OPTIONS update || true
+	URLS=$(apt-get $OPTIONS -y install --print-uris $INSTALL | cut -d "'" -f 2 | grep -e "^http")
+	for URL in $URLS ; do
+		cd "$appBuild"
+		if [ ! -f $(basename "$URL") ] ; then
+			wget -c $URL
+		fi
+		cd "$scriptAbsoluteFolder"
+	done
+	
+}
+
+
+#Installs debian packages to local directories.
+# Prerequsites: _collectAppDir _collectAPT
+_installDEBs() {
+	cd "$appDir"
+	
+	mkdir -p usr/bin usr/lib
+	find ../*.deb -exec dpkg -x {} . \; || true
+}
+
+
+## App Fixes
+#"$1" == _lowerapp
+# cd  == appDir
+# Prerequsites: _collectAppDir
+_fixIcons() {
+	cd "$appDir"
+	
+	#Errors may result from some programs relying on 
+	
+	# Try to copy icons to standard locations where appimaged can pick them up
+	mkdir -p usr/share/icons/hicolor/{22x22,24x24,32x32,48x48,64x64,128x128,256x256,512x512}/apps/
+	find . -path *icons* -path *22* -name "*$1*" -exec cp {} usr/share/icons/hicolor/22x22/apps/ \; || true
+	find . -path *icons* -path *24* -name "*$1*" -exec cp {} usr/share/icons/hicolor/24x24/apps/ \; || true
+	find . -path *icons* -path *32* -name "*$1*" -exec cp {} usr/share/icons/hicolor/32x32/apps/ \; || true
+	find . -path *icons* -path *48* -name "*$1*" -exec cp {} usr/share/icons/hicolor/48x48/apps/ \; || true
+	find . -path *icons* -path *64* -name "*$1*" -exec cp {} usr/share/icons/hicolor/64x64/apps/ \; || true
+	find . -path *icons* -path *128* -name "*$1*" -exec cp {} usr/share/icons/hicolor/128x128/apps/ \; || true
+	find . -path *icons* -path *256* -name "*$1*" -exec cp {} usr/share/icons/hicolor/256x256/apps/ \; || true
+	find . -path *icons* -path *512* -name "*$1*" -exec cp {} usr/share/icons/hicolor/512x512/apps/ \; || true
+	
+	
+	find ./usr/share/pixmaps/$1.png -exec cp {} . \; 2>/dev/null || true
+	find ./usr/share/icons -path *22* -name "$1".png -exec cp {} . \; 2>/dev/null || true
+	find ./usr/share/icons -path *24* -name "$1".png -exec cp {} . \; 2>/dev/null || true
+	find ./usr/share/icons -path *32* -name "$1".png -exec cp {} . \; 2>/dev/null || true
+	find ./usr/share/icons -path *48* -name "$1".png -exec cp {} . \; 2>/dev/null || true
+	find ./usr/share/icons -path *64* -name "$1".png -exec cp {} . \; 2>/dev/null || true
+	find ./usr/share/icons -path *128* -name "$1".png -exec cp {} . \; 2>/dev/null || true
+	find ./usr/share/icons -path *512* -name "$1".png -exec cp {} . \; 2>/dev/null || true
+	find ./usr/share/icons -path *256* -name "$1".png -exec cp {} . \; 2>/dev/null || true
+	ls -lh "$1".png || true
+	
+	# Find the desktop file and copy it to the AppDir
+	find usr/share/applications -iname "*${1}.desktop" -exec cp {} . \; || true
+	
+	cd "$scriptAbsoluteFolder"
+}
+
+
+# Some non-distribution provided applications have an absolute
+# path in the Exec= line which we remove for relocatability.
+# Also fix improper reference of icon filename extension.
+# cd  == appDir
+# Prerequsites: _collectAppDir
+_fixDesktopShortcutParameters() {
+	cd "$appDir"
+	
+	DESKTOP=$(find . -name '*.desktop' | sort | head -n 1)
+	if [ -z "$DESKTOP" ] ; then
+		echo "desktop file not found, aborting"
+		exit 1
+	else
+		desktop-file-validate "$DESKTOP" || exit 1
+		ORIG=$(grep -o "^Exec=.*$" "${DESKTOP}" | head -n 1| cut -d " " -f 1)
+		REPL=$(basename $(grep -o "^Exec=.*$" "${DESKTOP}" | head -n 1 | cut -d " " -f 1 | sed -e 's|Exec=||g'))
+		sed -i -e 's|'"${ORIG}"'|Exec='"${REPL}"'|g' "${DESKTOP}"
+	fi
+	
+	cd "$scriptAbsoluteFolder"
+	
+	# Fix desktop files that have file endings for icons
+	sed -i -e 's|\.png||g' *.desktop || true
+	sed -i -e 's|\.svg||g' *.desktop || true
+	sed -i -e 's|\.svgz||g' *.desktop || true
+	sed -i -e 's|\.xpm||g' *.desktop || true
+
+}
+
+#Slipstreams a binary asking user whether desktop integration (ie. menu shortcuts) are desired.
+#"$1" == _lowerapp
+# cd  == appDir
+# Prerequsites: _collectAppDir
+_offerDesktopIntegration() {
+	cd "$appDir"
+	
+	REALBIN=$(grep -o "^Exec=.*" *.desktop | sed -e 's|Exec=||g' | cut -d " " -f 1 | head -n 1)
+	cat "$guidanceDir"/desktopintegration > ./usr/bin/$REALBIN.wrapper
+	chmod a+x ./usr/bin/$REALBIN.wrapper
+
+	sed -i -e "s|^Exec=$REALBIN|Exec=$REALBIN.wrapper|g" $1.desktop
+	
+	cd "$scriptAbsoluteFolder"
+}
+alias get_desktopintegration='_offerDesktopIntegration'
+
+
+# Prevent Qt from loading plugins from the system
+# cd  == appDir
+# Prerequsites: _collectAppDir
+_limitQT() {
+	cd "$appDir"
+	
+	unset QTPATH
+	QTPATH=$(find usr/lib -type d -name qt4 -or -name qt5 | sed -e 's|usr/|../|g')
+	if [ ! -z $QTPATH ] ; then
+		cat > usr/bin/qt.conf <<EOF
+[Paths]
+Prefix = $QTPATH
+EOF
+	fi
+	
+	cd "$scriptAbsoluteFolder"
+}
+
+#Some libs may be installed to the wrong place.
+# Prerequsites: _collectAppDir
+_moveLibs() {
+	cd "$appDir"
+	
+	if [ -d "./usr/lib/x86_64-linux-gnu/gstreamer-1.0/" ] ; then
+		mv ./usr/lib/x86_64-linux-gnu/gstreamer-1.0/* ./usr/lib/x86_64-linux-gnu/
+		_safeRMR ./usr/lib/x86_64-linux-gnu/gstreamer-1.0
+	fi
+
+	if [ -d "./usr/lib/x86_64-linux-gnu/pulseaudio/" ] ; then
+		mv ./usr/lib/x86_64-linux-gnu/pulseaudio/* ./usr/lib/x86_64-linux-gnu/
+		_safeRMR ./usr/lib/x86_64-linux-gnu/pulseaudio
+	fi
+	
+	
+	cd "$scriptAbsoluteFolder"
+}
+
+# Echo highest glibc version needed by the executable files in the current directory
+_glibc_needed() {
+	find . -name *.so -or -name *.so.* -or -type f -executable  -exec readelf -s '{}' 2>/dev/null \; | sed -n 's/.*@GLIBC_//p'| awk '{print $1}' | sort --version-sort | tail -n 1
+}
+alias glibc_needed='_glibc_needed'
+
+# Find out the version
+# cd  == appDir
+# Prerequsites: _collectAppDir _collectRecipe
+_get_version() {
+	cd "$appDir"
+	
+	THEDEB=$(find ../*.deb -name $_lowerapp"_*" | head -n 1)
+	if [ -z "$THEDEB" ] ; then
+		echo "Version could not be determined from the .deb; you need to determine it manually"
+	fi
+	VER1=$(echo $THEDEB | cut -d "~" -f 1 | cut -d "_" -f 2 | cut -d "-" -f 1 | sed -e 's|1%3a||g' | sed -e 's|+dfsg||g' )
+	GLIBC_NEEDED=$(_glibc_needed)
+	VERSION=$VER1.glibc$GLIBC_NEEDED
+	echo $VERSION
+	
+	
+	cd "$scriptAbsoluteFolder"
+}
+alias get_version='_get_version'
+
+# Compile GLib schemas if the subdirectory is present in the AppImage
+# AppRun has to export GSETTINGS_SCHEMA_DIR for this to work
+# Prerequsites: _collectAppDir _collectRecipe
+_compileGLib() {
+	cd "$appDir"
+	
+	
+	# Compile GLib schemas if the subdirectory is present in the AppImage
+	# AppRun has to export GSETTINGS_SCHEMA_DIR for this to work
+	if [ -d usr/share/glib-2.0/schemas/ ] ; then
+		( cd usr/share/glib-2.0/schemas/ ; glib-compile-schemas . )
+	fi
+
+	if [ -f ../VERSION ] ; then
+		VERSION=$(cat ../VERSION).glibc$(_glibc_needed)
+	else
+		_get_version || true
+	fi
+	
+	
+	
+	cd "$scriptAbsoluteFolder"
+}
+
+# Fix Python imports,
+# https://github.com/probonopd/AppImages/issues/172
+# Prerequsites: _collectAppDir
+_fixPythonImports() {
+	cd "$appDir"
+	
+	
+	SITECUSTOMIZEFILES=$(find . -name "sitecustomize.py")
+	for SITECUSTOMIZEFILE in $SITECUSTOMIZEFILES ; do
+	rm $SITECUSTOMIZEFILE # Remove symlinks, replace by files
+	cat > $SITECUSTOMIZEFILE <<\EOF
+import sys,os
+prefix = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(sys.path[0]))))
+sys.path = [ prefix+s for s in sys.path if not s.startswith(prefix) ]
+EOF
+	done
+	
+	
+	cd "$scriptAbsoluteFolder"
+}
+
+
+# Delete blacklisted files (generally libraries).
+# Prerequsites: _collectAppDir
+_delete_blacklisted() {
+	cd "$appDir"
+	
+	BLACKLISTED_FILES=$(cat "$guidanceDir"/excludelist | sed '/^\s*$/d' | sed '/^#.*$/d')
+	echo $BLACKLISTED_FILES
+	for FILE in $BLACKLISTED_FILES ; do
+		FOUND=$(find . -xtype f -name "${FILE}" 2>/dev/null)
+		if [ ! -z "$FOUND" ] ; then
+			echo "Deleting blacklisted ${FOUND}"
+			rm -f "${FOUND}"
+		fi
+	done
+
+	# Do not bundle developer stuff
+	_safeRMR usr/include || true
+	_safeRMR usr/lib/cmake || true
+	_safeRMR usr/lib/pkgconfig || true
+	
+	# TODO Implement additional safety checks around this moderately hazardous command. Use proper "-delete" flag with find command.
+	find . -name '*.la' | xargs -i rm {}
+	
+	
+	cd "$scriptAbsoluteFolder"
+}
+alias delete_blacklisted='_delete_blacklisted'
+
+
+
+# Make binaries and related files relocatable, replace or override absolute paths.
+# Prerequsites: _collectAppDir
+_binpatch() {
+	cd "$appDir"
+	
+	# patch_usr
+	# Patching only the executable files seems not to be enough for some apps
+	if [ ! -z "${_binpatch}" ] ; then
+		find usr/ -type f -exec sed -i -e 's|/usr|././|g' {} \;
+		find usr/ -type f -exec sed -i -e 's@././/bin/env@/usr/bin/env@g' {} \;
+	fi
+
+	# Don't suffer from NIH; use LD_PRELOAD to override calls to /usr paths
+	if [ ! -z "${_union}" ] ; then
+		mkdir -p usr/src/
+		wget -q "https://raw.githubusercontent.com/mikix/deb2snap/master/src/preload.c" -O - | \
+		sed -e 's|SNAPPY|UNION|g' | sed -e 's|SNAPP|UNION|g' | sed  -e 's|SNAP|UNION|g' | \
+		sed -e 's|snappy|union|g' > usr/src/libunionpreload.c
+		gcc -shared -fPIC usr/src/libunionpreload.c -o libunionpreload.so -ldl -DUNION_LIBNAME=\"libunionpreload.so\"
+		strip libunionpreload.so
+	fi
+	
+	cd "$scriptAbsoluteFolder"
+}
+
+
+## AppImage Packaging
+
+#Installs AppRun.
+# cd  == appDir
+# Prerequsites: _collectAppDir _collectRecipe
+_installAppRun() {
+	cd "$appDir"
+	
+	if [ -z "${_union}" ] ; then
+	cp "$guidanceDir"/AppRun ./
+	else
+	cat > AppRun <<\EOF
+#!/bin/sh
+HERE="$(dirname "$(readlink -f "${0}")")"
+export UNION_PRELOAD="${HERE}"
+export LD_PRELOAD="${HERE}/libunionpreload.so"
+export PATH="${HERE}"/usr/bin/:"${HERE}"/usr/sbin/:"${HERE}"/usr/games/:"${HERE}"/bin/:"${HERE}"/sbin/:"${PATH}"
+export LD_LIBRARY_PATH="${HERE}"/usr/lib/:"${HERE}"/usr/lib/i386-linux-gnu/:"${HERE}"/usr/lib/x86_64-linux-gnu/:"${HERE}"/usr/lib32/:"${HERE}"/usr/lib64/:"${HERE}"/lib/:"${HERE}"/lib/i386-linux-gnu/:"${HERE}"/lib/x86_64-linux-gnu/:"${HERE}"/lib32/:"${HERE}"/lib64/:"${LD_LIBRARY_PATH}"
+export PYTHONPATH="${HERE}"/usr/share/pyshared/:"${PYTHONPATH}"
+export XDG_DATA_DIRS="${HERE}"/usr/share/:"${XDG_DATA_DIRS}"
+export PERLLIB="${HERE}"/usr/share/perl5/:"${HERE}"/usr/lib/perl5/:"${PERLLIB}"
+export GSETTINGS_SCHEMA_DIR="${HERE}"/usr/share/glib-2.0/schemas/:"${GSETTINGS_SCHEMA_DIR}"
+export QT_PLUGIN_PATH="${HERE}"/usr/lib/qt4/plugins/:"${HERE}"/usr/lib/i386-linux-gnu/qt4/plugins/:"${HERE}"/usr/lib/x86_64-linux-gnu/qt4/plugins/:"${HERE}"/usr/lib32/qt4/plugins/:"${HERE}"/usr/lib64/qt4/plugins/:"${HERE}"/usr/lib/qt5/plugins/:"${HERE}"/usr/lib/i386-linux-gnu/qt5/plugins/:"${HERE}"/usr/lib/x86_64-linux-gnu/qt5/plugins/:"${HERE}"/usr/lib32/qt5/plugins/:"${HERE}"/usr/lib64/qt5/plugins/:"${QT_PLUGIN_PATH}"
+EXEC=$(grep -e '^Exec=.*' "${HERE}"/*.desktop | head -n 1 | cut -d "=" -f 2- | sed -e 's|%.||g')
+exec ${EXEC} $@
+EOF
+	chmod a+x AppRun
+fi
+	
+	cd "$scriptAbsoluteFolder"
+}
+
+
+
+#Actually creates AppImage, type 2.
+# cd == appBuild
+# Prerequsites: _collectAppDir _collectRecipe
+_generate_type2_appimage() {
+	cd "$appBuild"
+	
+	if ( [ ! -z "$KEY" ] ) && ( ! -z "$TRAVIS" ) ; then
+		set +x
+		
+		wget https://github.com/probonopd/AppImageKit/files/584665/data.zip -O data.tar.gz.gpg
+		( set +x ; echo $KEY | gpg2 --batch --passphrase-fd 0 --no-tty --skip-verify --output data.tar.gz --decrypt data.tar.gz.gpg )
+		tar xf data.tar.gz
+		sudo chown -R $USER .gnu*
+		mv $HOME/.gnu* $HOME/.gnu_old ; mv .gnu* $HOME/
+		VERSION=$VERSION "$guidanceDir"/appimagetool -n -s --bintray-user $BINTRAY_USER --bintray-repo $BINTRAY_REPO -v ./$_app.AppDir/
+		
+		set -x
+		else
+		VERSION=$VERSION "$guidanceDir"/appimagetool -n --bintray-user $BINTRAY_USER --bintray-repo $BINTRAY_REPO -v ./$_app.AppDir/
+	fi
+	
+	mkdir -p "$scriptAbsoluteFolder"/out/ || true
+	mv *.AppImage* "$scriptAbsoluteFolder"/out/
+	
+	cd "$scriptAbsoluteFolder"
+}
+
+
+
+
+
+## CORE
+_preserveLog() {
+	cp "$logTmp"/* "$appBuild"/
+}
+
+_collectRecipe() {
+	recipeCfg=$(_getAbsoluteLocation "$1")
+	recipeDir=$(_getAbsoluteFolder "$1")
+	
+	
+	#Override functions with external definitions from a separate file if available.
+	if [[ -e "$recipeDir"/ops ]]
+	then
+		. "$recipeDir"/ops
+	fi
+	
+	
+	_convert_any "$recipeCfg" > "$importFile"
+	
+	. "$importFile"
+	
+	_lowerapp=$(echo "$_app" | tr '[:upper:]' '[:lower:]')
+	
+	printf '%s\n' "${_script[@]}" > "$safeTmp"/_script
+	printf '%s\n' "${_post[@]}" > "$safeTmp"/_post
+	printf '%s\n' "${_ingredients_script[@]}" > "$safeTmp"/_ingredients_script
+	
+	
+	#_ingredients_ghreleases
+	#_ingredients_dist
+	#_ingredients_exclude
+	#_ingredients_pretend
+	#_ingredients_sources
+	#_ingredients_ppas
+	
+	#_ingredients_debs
+	
+	#_ingredients_package
+	
+	#_ingredients_packages
+	
+	#_ingredients_script
+	
+}
+
+#Prerequsites: _collectRecipe
+_collectAppDir() {
+	export appBuild="$scriptAbsoluteFolder"/"$_app"
+	export appDir="$appBuild"/"$_app".AppDir
+	
+	#_safeRMR "$appBuild"
+	_safeRMR "$appDir"
+	mkdir -p "$appDir"
+}
+
+
+_collectAPT() {
+	export aptDir="$safeTmp"/apt
+	export aptTmpDir="$aptDir"/tmp
+	
+	#Optionally puts some apt files directly in appBuild. Incurrs _collectAppDir as prerequsite.
+	#export aptDir="$appBuild"/apt
+	#export aptTmpDir="$safeTmp"/apt
+	
+	mkdir -p "$aptDir"
+	mkdir -p "$aptTmpDir"
+	
+	mkdir -p "$aptDir"/archives
+	mkdir -p "$aptDir"/lists/partial
+	
+	export aptStatusFile="$aptDir"/status
+	export aptSourcesList="$aptDir"/sources.list
+	
+	touch "$aptDir"/pkgcache.bin "$aptDir"/srcpkgcache.bin "$aptStatusFile" "$aptSourcesList"
+	
+	# Options for apt-get to use local files rather than the system ones
+	OPTIONS="-o Debug::NoLocking=1 -o APT::Cache-Limit=125829120 -o Dir::Etc::sourcelist="$aptSourcesList" -o Dir::State="$aptTmpDir" -o Dir::Cache="$aptTmpDir" -o Dir::State::status="$aptStatusFile" -o Dir::Etc::sourceparts=- -o APT::Get::List-Cleanup=0 -o APT::Get::AllowUnauthenticated=1 -o Debug::pkgProblemResolver=true -o Debug::pkgDepCache::AutoInstall=true -o APT::Install-Recommends=0 -o APT::Install-Suggests=0"
+}
+
+
+#Specialized global variables, directories, subscripts. Equivalent to prepare().
+_collect() {
+	
+	_collectRecipe "$@"
+	
+	_collectAppDir "$@"
+	
+	_collectAPT "$@"
+	
+	
+	
+}
+
+
+#Program entry point.
+#"$1" == recipeCfg
+_main() {
+	
+	_start
+	
+	_collect "$@" 
+	
+	
+	_fullAPTstatus
+	
+	_remoteAPTsources
+	_fetchDEBs
+	
+	cd "$appBuild"
+	. "$safeTmp"/_ingredients_script
+	cd "$scriptAbsoluteFolder"
+	
+	_localAPTsources
+	
+	_preserveAPT
+	
+	_fetchAPT
+	
+	_installDEBs
+	
+	_fixIcons "$_lowerapp"
+	_fixDesktopShortcutParameters
+	_offerDesktopIntegration "$_lowerapp"
+	
+	_installAppRun
+	
+	_limitQT
+	
+	_moveLibs
+	
+	cd "$appDir"
+	. "$safeTmp"/_script
+	cd "$scriptAbsoluteFolder"
+	
+	_compileGLib
+	
+	_fixPythonImports
+	
+	_delete_blacklisted
+	
+	_binpatch
+	
+	cd "$appDir"
+	. "$safeTmp"/_post
+	cd "$scriptAbsoluteFolder"	
+	
+	_generate_type2_appimage
+	
+	ls -lh "$scriptAbsoluteFolder"/out/*.AppImage
+	
+	
+	
+	
+	
+	
+	_preserveLog
+	
+	read
+	_stop
+	
+	
+}
+
+#Override functions with external definitions from a separate file if available.
+if [[ -e "./ops" ]]
+then
+	. ./ops
+fi
+
+#Override functions with external definitions from a separate file if available.
+if [[ -e "$guidanceDir"/ops ]]
+then
+	. "$guidanceDir"/ops
+fi
+
+
+#Launch internal functions as commands.
+#if [[ "$1" != "" ]] && [[ "$1" != "-"* ]] && [[ ! -e "$1" ]]
+if [[ "$1" == '_'* ]]
+then
+	"$@"
+	exit "$?"
+	#_stop "$?"
+fi
+
+#Stop if script is imported into an existing shell.
+if [[ "${BASH_SOURCE[0]}" != "${0}" ]]
+then
+	return
+fi
+
+
+#"$scriptAbsoluteLocation" _setup
+
+if [[ "$1" == "" ]] || ! [[ -e "$1" ]]
+then
+	echo -e '\E[1;33;41m ./build <recipe> \E[0m'
+	_stop
+fi
+
+_main "$@"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
