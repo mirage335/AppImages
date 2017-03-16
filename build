@@ -927,7 +927,7 @@ _collectRecipe() {
 
 #Prerequsites: _collectRecipe
 _collectAppDir() {
-	export appBuild="$scriptAbsoluteFolder"/"$_app"
+	export appBuild="$scriptAbsoluteFolder"/apps/"$_app"
 	export appDir="$appBuild"/"$_app".AppDir
 	
 	#_safeRMR "$appBuild"
@@ -1037,7 +1037,7 @@ _main() {
 	
 	_preserveLog
 	
-	read
+	#read
 	_stop
 	
 	
