@@ -12,7 +12,7 @@ ingredients:
   sources:
     - deb http://archive.ubuntu.com/ubuntu/ trusty main universe
   ppas:
-    - js-reynaud/kicad-4
+    - js-reynaud/ppa-kicad
 
 script:
   - # Workaround until
