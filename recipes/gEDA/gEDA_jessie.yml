@@ -2,12 +2,12 @@ app: gschem
 binpatch: true
 
 ingredients:
-  package: geda
-  dist: xenial
+  packages:
+   - geda
+   - guile
+  dist: jessie
   sources: 
-    - deb http://archive.ubuntu.com/ubuntu/ xenial main universe
-  ppas:
-    - mehanik/geda-unstable
+    - deb http://ftp.us.debian.org/debian/ jessie main
     
 
 script:

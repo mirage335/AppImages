@@ -789,6 +789,17 @@ alias delete_blacklisted='_delete_blacklisted'
 
 
 
+# Actually implements string substitution based binpatching, making binaries and related files relocatable.
+_standardUsrBinPatchDir() {
+	
+	#local binpatchLocation="$1"
+	#shift
+	
+	find "$@" -type f -exec sed -i -e 's|/usr|././|g' {} \;
+	find "$@" -type f -exec sed -i -e 's@././/bin/env@/usr/bin/env@g' {} \;
+	
+}
+
 # Make binaries and related files relocatable, replace or override absolute paths.
 # Prerequsites: _collectAppDir
 _binpatch() {
@@ -797,10 +808,9 @@ _binpatch() {
 	# patch_usr
 	# Patching only the executable files seems not to be enough for some apps
 	if [ ! -z "${_binpatch}" ] ; then
-		find usr/ -type f -exec sed -i -e 's|/usr|././|g' {} \;
-		find usr/ -type f -exec sed -i -e 's@././/bin/env@/usr/bin/env@g' {} \;
+		_standardUsrBinPatchDir usr -type d \( -path usr/share/guile -o -path usr/share/gEDA/scheme \) -prune -o
 	fi
-
+	
 	# Don't suffer from NIH; use LD_PRELOAD to override calls to /usr paths
 	if [ ! -z "${_union}" ] ; then
 		mkdir -p usr/src/
