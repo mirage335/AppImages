@@ -3,11 +3,13 @@ binpatch: true
 
 ingredients:
   package: geda
-  dist: trusty
+  package: guile-2.0
+  dist: xenial
   sources: 
-    - deb http://archive.ubuntu.com/ubuntu/ trusty main universe
+    - deb http://archive.ubuntu.com/ubuntu/ xenial main universe
   ppas:
     - mehanik/geda-unstable
+    
 
 script:
   - ls ../geda-gschem_*.deb | cut -d "_" -f 2 | cut -d "+" -f 1 > ../VERSION

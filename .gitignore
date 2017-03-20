@@ -33,3 +33,14 @@
 
 # Backup & Temporary files
 *~
+
+# Binaries to be in a separate repo.
+apps/
+out/
+
+
+
+
+
+
+
