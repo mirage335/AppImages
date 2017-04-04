@@ -6,6 +6,7 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
     ca-certificates \
     curl \
     x11-apps \
+    libgl1-mesa-glx libgl1-mesa-dri mesa-utils \
     wget \
     gnupg2 \
     file \
@@ -14,7 +15,8 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
     desktop-file-utils \
     libfuse2 \
     libarchive13 \
-    aria2
+    aria2 \
+    hicolor-icon-theme
     
     
 

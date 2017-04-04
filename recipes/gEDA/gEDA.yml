@@ -2,7 +2,13 @@ app: gschem
 binpatch: true
 
 ingredients:
-  package: geda
+  packages:
+   - geda
+   - hicolor-icon-theme
+   - gnome-icon-theme
+   - extra-xdg-menus
+   - guile-2.0-libs
+   - libgeda-common
   dist: xenial
   sources: 
     - deb http://archive.ubuntu.com/ubuntu/ xenial main universe

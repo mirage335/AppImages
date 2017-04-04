@@ -745,7 +745,7 @@ _checkBaseDirRemote() {
 		fi
 	done < "$safeTmp"/hostArgs
 	
-	if docker run -it --name "$containerObjectName"_"$sessionid"_cr --rm "$imageObjectName" /bin/bash -c '[[ -e "'"$1"'" ]]' >/dev/null 2>&1
+	if docker run -it --name "$containerObjectName"_"$sessionid"_cr -e LOCAL_USER_ID=`id -u $USER` --rm "$imageObjectName" /bin/bash -c '[[ -e "'"$1"'" ]]' >/dev/null 2>&1
 	then
 		echo "$1" >> "$safeTmp"/guestArgs
 		return
