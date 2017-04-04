@@ -436,7 +436,7 @@ _fullAPTstatus() {
 			P_PKG=$(echo "$PRETEND" | cut -d " " -f 1)
 			P_VER=$(echo "$PRETEND" | cut -d " " -f 2)
 			cat "$aptStatusFile" | tr '\n' '@' | sed -e 's|@@|\n\n|g' | sed -e 's|Package: '"$P_PKG"'@Status: install ok installed@Architecture: all@Version: 9:999.999.999|Package: '"$P_PKG"'@Status: install ok installed@Architecture: all@Version: '"$P_VER"'|g' | sed -e 's|@|\n|g' > "$aptStatusFile".temp
-			mv "$aptStatusFile".temp status
+			mv "$aptStatusFile".temp "$aptStatusFile"
 		done
 	fi
 
@@ -995,7 +995,6 @@ _main() {
 	
 	_collect "$@" 
 	
-	
 	_fullAPTstatus
 	
 	_remoteAPTsources
@@ -1092,6 +1091,8 @@ then
 	echo -e '\E[1;33;41m ./build <recipe> \E[0m'
 	_stop
 fi
+
+cd "$scriptAbsoluteFolder"
 
 _main "$@"
 
