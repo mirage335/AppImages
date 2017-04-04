@@ -744,6 +744,8 @@ _compileGLib() {
 # https://github.com/probonopd/AppImages/issues/172
 # Prerequsites: _collectAppDir
 _fixPythonImports() {
+	return #disabled by default
+	
 	cd "$appDir"
 	
 	

@@ -2,7 +2,8 @@
 #Alternative to "git submodule" and "git pull" .
 
 
-wget -c https://github.com/probonopd/AppImageKit/releases/download/6/AppRun_6-x86_64 -O AppRun
+#wget -c https://github.com/probonopd/AppImageKit/releases/download/6/AppRun_6-x86_64 -O AppRun
+wget -c https://github.com/probonopd/AppImageKit/releases/download/continuous/AppRun-x86_64 -O AppRun
 chmod u+x AppRun
 
 wget -c "https://github.com/probonopd/AppImageKit/releases/download/6/AppImageAssistant_6-x86_64.AppImage" -O  AppImageAssistant

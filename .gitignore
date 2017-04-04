@@ -38,7 +38,8 @@
 apps/
 out/
 
-
+# Temporary work directories.
+aiw_*/
 
 
 
