@@ -10,7 +10,7 @@ _enter() {
 }
 
 _runExec() {
-	docker run -it --name "$containerObjectName"_"$sessionid" -e LOCAL_USER_ID=`id -u $USER` --rm -v "$sharedHostProjectDir":"$sharedGuestProjectDir":rw "$imageObjectName" "$@"
+	docker run -it --name "$containerObjectName"_"$sessionid" --cap-add SYS_ADMIN --device /dev/fuse --security-opt apparmor:unconfined -e LOCAL_USER_ID=`id -u $USER` --rm -v "$sharedHostProjectDir":"$sharedGuestProjectDir":rw "$imageObjectName" "$@"
 }
 
 

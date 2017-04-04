@@ -27,8 +27,11 @@ When necessary it is also possible to overload any function/variable in the buil
 
 Build script can be trivially confined to a DockerApp container given only necessary resources.
 
+```
 ./appfactory/anchor ./build _setup
 ./anchor _setup
+./anchor ./recipes/App/App.yml
+```
 
 ## Motivation
 

@@ -317,6 +317,8 @@ _test() {
 	_checkDep dpkg
 	_checkDep apt
 	
+	_checkDep desktop-file-validate
+	
 	
 	[[ -e /dev/urandom ]] || echo /dev/urandom missing _stop
 	
