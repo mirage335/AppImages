@@ -291,10 +291,10 @@ _test() {
 	_checkDep head
 	_checkDep tail
 	
-	
 	_checkDep realpath
 	_checkDep readlink
 	_checkDep dirname
+	_checkDep basename
 	
 	_checkDep sleep
 	_checkDep wait
@@ -320,7 +320,7 @@ _test() {
 	
 	[[ -e /dev/urandom ]] || echo /dev/urandom missing _stop
 	
-	echo "PASS"
+	echo "END"
 	
 	echo -e '\E[1;32;46m ENTER to continue.	\E[0m'
 	read

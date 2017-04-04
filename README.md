@@ -23,6 +23,13 @@ To build an AppImage from a `.yml` description file:
 
 When necessary it is also possible to overload any function/variable in the build script using an "ops" shell script in the same directory as the `.yml` configuration, or the build script itself. It is also possible to directly use shell script formatted configuraton files instead of `.yml`. Further, there is no requirement that the configuration file be in any particular directory, though some resources may be created under the script's directory.
 
+## Containment
+
+Build script can be trivially confined to a DockerApp container given only necessary resources.
+
+./appfactory/anchor ./build _setup
+./anchor _setup
+
 ## Motivation
 
 Linus addresses some core issues of Linux on the desktop in his [DebConf 14_ QA with Linus Torvalds talk](https://www.youtube.com/watch?v=5PmHRSeA2c8). At 05:40 Linus highlights application packaging: 

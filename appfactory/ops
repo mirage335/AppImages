@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+export objectName="unimportant-local/factory:factory-local/debian:jessie"
+
+_deriveBaseImageContainerNames
+
+_enter() {
+	_run "$@"
+	#_run /bin/bash "$@"
+}
+
+_runExec() {
+	docker run -it --name "$containerObjectName"_"$sessionid" -e LOCAL_USER_ID=`id -u $USER` --rm -v "$sharedHostProjectDir":"$sharedGuestProjectDir":rw "$imageObjectName" "$@"
+}
+
+
+
+
