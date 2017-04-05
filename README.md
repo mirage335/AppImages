@@ -33,6 +33,10 @@ Build script can be trivially confined to a DockerApp container given only neces
 ./anchor ./recipes/App/App.yml
 ```
 
+## Notable
+
+* Subsurface is built directly from source code, rather than relying on upstream binary packages provided by a distribution.
+
 ## Motivation
 
 Linus addresses some core issues of Linux on the desktop in his [DebConf 14_ QA with Linus Torvalds talk](https://www.youtube.com/watch?v=5PmHRSeA2c8). At 05:40 Linus highlights application packaging: 
