@@ -322,6 +322,9 @@ export importFile="$logTmp"/import
 #Resource directories.
 export guidanceDir="$scriptAbsoluteFolder"/guidance
 
+#Current directory for preservation.
+export outerPWD=$(_getAbsoluteLocation "$PWD")
+
 #Object Dir
 export objectDir="$scriptAbsoluteFolder"
 
@@ -756,7 +759,18 @@ _checkBaseDirRemote() {
 }
 
 _runExec() {
-	docker run -it --name "$containerObjectName"_"$sessionid" -e LOCAL_USER_ID=`id -u $USER` --rm -e DISPLAY=$DISPLAY -v $XSOCK:$XSOCK:rw -v $XAUTH:$XAUTH:rw -e "XAUTHORITY=${XAUTH}" -v "$HOME"/Downloads:/home/user/Downloads:rw -v "$sharedHostProjectDir":"$sharedGuestProjectDir":rw "$imageObjectName" "$@"
+	#File parameter translation.
+	#docker run -it --name "$containerObjectName"_"$sessionid" -e localPWD="$localPWD" -e LOCAL_USER_ID=`id -u $USER` --rm -v "$sharedHostProjectDir":"$sharedGuestProjectDir":rw "$imageObjectName" "$@"
+	
+	#Basic display support.
+	#docker run -it --name "$containerObjectName"_"$sessionid" -e localPWD="$localPWD" -e LOCAL_USER_ID=`id -u $USER` --rm -e DISPLAY=$DISPLAY -v $XSOCK:$XSOCK:rw -v $XAUTH:$XAUTH:rw -e "XAUTHORITY=${XAUTH}" -v "$HOME"/Downloads:/home/user/Downloads:rw -v "$sharedHostProjectDir":"$sharedGuestProjectDir":rw "$imageObjectName" "$@"
+	
+	#FUSE.
+	docker run -it --name "$containerObjectName"_"$sessionid" --cap-add SYS_ADMIN --device /dev/fuse --security-opt apparmor:unconfined -e localPWD="$localPWD" -e LOCAL_USER_ID=`id -u $USER` --rm -e DISPLAY=$DISPLAY -v $XSOCK:$XSOCK:rw -v $XAUTH:$XAUTH:rw -e "XAUTHORITY=${XAUTH}" -v "$HOME"/Downloads:/home/user/Downloads:rw -v "$sharedHostProjectDir":"$sharedGuestProjectDir":rw "$imageObjectName" "$@"
+	
+	#OpenGL, Intel HD Graphics.
+	#docker run -it --name "$containerObjectName"_"$sessionid" --cap-add SYS_ADMIN --device /dev/fuse --security-opt apparmor:unconfined -e localPWD="$localPWD" -e LOCAL_USER_ID=`id -u $USER` --rm -e DISPLAY=$DISPLAY -v $XSOCK:$XSOCK:rw -v $XAUTH:$XAUTH:rw -e "XAUTHORITY=${XAUTH}" --device=/dev/dri:/dev/dri -v "$HOME"/Downloads:/home/user/Downloads:rw -v "$sharedHostProjectDir":"$sharedGuestProjectDir":rw "$imageObjectName" "$@"
+	
 }
 
 _run() {
@@ -774,13 +788,15 @@ _run() {
 	
 	sharedGuestProjectDir="/home/user/project"
 	
-	sharedHostProjectDir=$(_searchBaseDir "$@")
+	sharedHostProjectDir=$(_searchBaseDir "$@" "$outerPWD")
 	
 	if [[ "$sharedHostProjectDir" == "" ]]
 	then
 		sharedHostProjectDir="$safeTmp"/shared
 		mkdir -p "$sharedHostProjectDir"
 	fi
+	
+	export localPWD=$(_localDir "$outerPWD" "$sharedHostProjectDir" "$sharedGuestProjectDir")
 	
 	#http://stackoverflow.com/questions/15420790/create-array-in-loop-from-number-of-arguments
 	local processedArgs

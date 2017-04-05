@@ -12,11 +12,13 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
     file \
     build-essential \
     fuse \
-    desktop-file-utils \
-    libfuse2 \
-    libarchive13 \
-    aria2 \
     hicolor-icon-theme
+
+RUN apt-get -y --no-install-recommends install \
+    desktop-file-utils \                                                                                                                                                                                                        
+    libfuse2 \                                                                                                                                                                                                                  
+    libarchive13 \                                                                                                                                                                                                              
+    aria2
     
     
 

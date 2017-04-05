@@ -28,6 +28,7 @@ chown user:user "$HOME"
 
 cp -r /etc/skel/. /home/user/
 
+cd "$localPWD"
 
 if [[ "$1" == "" ]]
 then
