@@ -19,7 +19,9 @@ RUN apt-get -y --no-install-recommends install \
     libfuse2 \                                                                                                                                                                                                                  
     libarchive13 \                                                                                                                                                                                                              
     aria2
-    
+
+RUN apt-get -y --no-install-recommends install \
+    git
     
 
 RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4

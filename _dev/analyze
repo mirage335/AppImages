@@ -1,0 +1,173 @@
+#!/bin/bash
+
+#Compares two AppImages. Has some faults, use with care and understanding.
+
+#####Utilities.
+#Retrieves absolute path of current script, while maintaining symlinks, even when "./" would translate with "readlink -f" into something disregarding symlinked components in $PWD.
+#However, will dereference symlinks IF the script location itself is a symlink. This is to allow symlinking to scripts to function normally.
+#Suitable for allowing scripts to find other scripts they depend on. May look like an ugly hack, but it has proven reliable over the years.
+_getScriptAbsoluteLocation() {
+	local absoluteLocation
+	if [[ (-e $PWD\/$0) && ($0 != "") ]]
+			then
+	absoluteLocation="$PWD"\/"$0"
+	absoluteLocation=$(realpath -s "$absoluteLocation")
+			else
+	absoluteLocation="$0"
+	fi
+
+	if [[ -h "$absoluteLocation" ]]
+			then
+	absoluteLocation=$(readlink -f "$absoluteLocation")
+	fi
+
+	echo $absoluteLocation
+}
+
+
+#Suitable for allowing scripts to find other scripts they depend on.
+_getScriptAbsoluteFolder() {
+	dirname "$(_getScriptAbsoluteLocation)"
+}
+
+#Retrieves absolute path of parameter, while maintaining symlinks, even when "./" would translate with "readlink -f" into something disregarding symlinked components in $PWD.
+#Suitable for finding absolute paths, when it is desirable not to interfere with symlink specified folder structure.
+_getAbsoluteLocation() {
+	local absoluteLocation
+	if [[ (-e $PWD\/$1) && ($1 != "") ]]
+			then
+	absoluteLocation="$PWD"\/"$1"
+	absoluteLocation=$(realpath -s "$absoluteLocation")
+			else
+	absoluteLocation="$1"
+	fi
+	echo $absoluteLocation
+}
+
+#Retrieves absolute path of parameter, while maintaining symlinks, even when "./" would translate with "readlink -f" into something disregarding symlinked components in $PWD.
+#Suitable for finding absolute paths, when it is desirable not to interfere with symlink specified folder structure.
+_getAbsoluteFolder() {
+	local absoluteLocation=$(_getAbsoluteLocation "$1")
+	dirname "$absoluteLocation"
+}
+
+_checkDep() {
+	type "$1" >/dev/null 2>&1 || ( echo "$1" missing && exit 1 )
+}
+
+#Portable sanity checked "rm -r" command.
+#"$1" == directory to remove
+_safeRMR() {
+	
+	#if [[ ! -e "$0" ]]
+	#then
+	#	return 1
+	#fi
+	
+	if [[ "$1" == "" ]]
+	then
+		return 1
+	fi
+	
+	if [[ "$1" == "/" ]]
+	then
+		return 1
+	fi
+	
+	#Blacklist.
+	[[ "$1" == "/home" ]] && return 1
+	[[ "$1" == "/home/" ]] && return 1
+	[[ "$1" == "/home/$USER" ]] && return 1
+	[[ "$1" == "/home/$USER/" ]] && return 1
+	[[ "$1" == "/$USER" ]] && return 1
+	[[ "$1" == "/$USER/" ]] && return 1
+	
+	[[ "$1" == "/tmp" ]] && return 1
+	[[ "$1" == "/tmp/" ]] && return 1
+	
+	#Whitelist.
+	local safeToRM=false
+	
+	local safeScriptAbsoluteFolder="$_getScriptAbsoluteFolder"
+	
+	[[ "$1" == "./"* ]] && [[ "$PWD" == "$safeScriptAbsoluteFolder"* ]] && safeToRM="true"
+	
+	[[ "$1" == "$safeScriptAbsoluteFolder"* ]] && safeToRM="true"
+	
+	#[[ "$1" == "/home/$USER"* ]] && safeToRM="true"
+	[[ "$1" == "/tmp/"* ]] && safeToRM="true"
+	
+	[[ "$safeToRM" == "false" ]] && return 1
+	
+	#Safeguards/
+	[[ -d "$1" ]] && find "$1" | grep -i '\.git$' >/dev/null 2>&1 && return 1
+	
+	#Validate necessary tools were available for path building and checks.
+	_checkDep realpath
+	_checkDep readlink
+	_checkDep dirname
+	_checkDep basename
+	
+	if [[ -e "$1" ]]
+	then
+		#sleep 0
+		#echo "$1"
+		rm -rf "$1"
+	fi
+}
+
+_waitForAppImageMount() {
+	while ! ls -ld /tmp/.mount*/*
+	do
+		sleep 1
+	done
+	sleep 1
+}
+
+
+
+
+"$1" &
+process="$!"
+
+_waitForAppImageMount
+
+mkdir -p ./a
+cp -a /tmp/.mount*/* ./a
+
+kill "$process"
+sleep 1
+kill -KILL "$process"
+sleep 1
+
+
+
+
+"$2" &
+process="$!"
+
+_waitForAppImageMount
+
+mkdir -p ./b
+cp -a /tmp/.mount*/* ./b
+
+kill "$process"
+sleep 1
+kill -KILL "$process"
+sleep 1
+
+
+
+kdiff3 ./a ./b
+
+
+
+
+
+
+
+
+
+
+
+ 
