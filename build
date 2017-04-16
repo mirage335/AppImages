@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
 #####Utilities.
+_showCommand() {
+	echo -e '\E[1;32;46m $ '"$1"' \E[0m'
+	"$@"
+}
+
 #Retrieves absolute path of current script, while maintaining symlinks, even when "./" would translate with "readlink -f" into something disregarding symlinked components in $PWD.
 #However, will dereference symlinks IF the script location itself is a symlink. This is to allow symlinking to scripts to function normally.
 #Suitable for allowing scripts to find other scripts they depend on. May look like an ugly hack, but it has proven reliable over the years.
@@ -994,54 +999,54 @@ _collect() {
 #"$1" == recipeCfg
 _main() {
 	
-	_start
+	_showCommand _start
 	
-	_collect "$@" 
+	_showCommand _collect "$@" 
 	
-	_fullAPTstatus
+	_showCommand _fullAPTstatus
 	
-	_remoteAPTsources
-	_fetchDEBs
+	_showCommand _remoteAPTsources
+	_showCommand _fetchDEBs
 	
 	cd "$appBuild"
 	. "$safeTmp"/_ingredients_script
 	cd "$scriptAbsoluteFolder"
 	
-	_localAPTsources
+	_showCommand _localAPTsources
 	
-	_preserveAPT
+	_showCommand _preserveAPT
 	
-	_fetchAPT
+	_showCommand _fetchAPT
 	
-	_installDEBs
+	_showCommand _installDEBs
 	
-	_fixIcons "$_lowerapp"
-	_fixDesktopShortcutParameters
-	_offerDesktopIntegration "$_lowerapp"
+	_showCommand _installAppRun
 	
-	_installAppRun
+	_showCommand _limitQT
 	
-	_limitQT
-	
-	_moveLibs
+	_showCommand _moveLibs
 	
 	cd "$appDir"
 	. "$safeTmp"/_script
 	cd "$scriptAbsoluteFolder"
 	
-	_compileGLib
+	_showCommand _fixIcons "$_lowerapp"
+	_showCommand _fixDesktopShortcutParameters
+	_showCommand _offerDesktopIntegration "$_lowerapp"
 	
-	_fixPythonImports
+	_showCommand _compileGLib
 	
-	_delete_blacklisted
+	_showCommand _fixPythonImports
 	
-	_binpatch
+	_showCommand _delete_blacklisted
+	
+	_showCommand _binpatch
 	
 	cd "$appDir"
 	. "$safeTmp"/_post
 	cd "$scriptAbsoluteFolder"	
 	
-	_generate_type2_appimage
+	_showCommand _generate_type2_appimage
 	
 	ls -lh "$scriptAbsoluteFolder"/out/*.AppImage
 	
@@ -1050,10 +1055,10 @@ _main() {
 	
 	
 	
-	_preserveLog
+	_showCommand _preserveLog
 	
 	#read
-	_stop
+	_showCommand _stop
 	
 	
 }
