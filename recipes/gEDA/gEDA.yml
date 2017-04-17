@@ -20,3 +20,8 @@ script:
   - ls ../geda-gschem_*.deb | cut -d "_" -f 2 | cut -d "+" -f 1 > ../VERSION
   - cp usr/share/applications/geda-gschem.desktop gschem.desktop
   - cp ./usr/share/icons/hicolor/scalable/apps/geda-gschem.svg .
+
+post:
+  - #cp ../../../recipes/gEDA/AppRun ./
+
+

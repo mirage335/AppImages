@@ -630,13 +630,13 @@ _fixDesktopShortcutParameters() {
 		sed -i -e 's|'"${ORIG}"'|Exec='"${REPL}"'|g' "${DESKTOP}"
 	fi
 	
-	cd "$scriptAbsoluteFolder"
-	
 	# Fix desktop files that have file endings for icons
 	sed -i -e 's|\.png||g' *.desktop || true
 	sed -i -e 's|\.svg||g' *.desktop || true
 	sed -i -e 's|\.svgz||g' *.desktop || true
 	sed -i -e 's|\.xpm||g' *.desktop || true
+	
+	cd "$scriptAbsoluteFolder"
 
 }
 
@@ -1026,6 +1026,7 @@ _main() {
 	
 	_showCommand _moveLibs
 	
+	echo -e '\E[1;32;46m $ '"_script"' \E[0m'
 	cd "$appDir"
 	. "$safeTmp"/_script
 	cd "$scriptAbsoluteFolder"
@@ -1042,9 +1043,10 @@ _main() {
 	
 	_showCommand _binpatch
 	
+	echo -e '\E[1;32;46m $ '"_post"' \E[0m'
 	cd "$appDir"
 	. "$safeTmp"/_post
-	cd "$scriptAbsoluteFolder"	
+	cd "$scriptAbsoluteFolder"
 	
 	_showCommand _generate_type2_appimage
 	

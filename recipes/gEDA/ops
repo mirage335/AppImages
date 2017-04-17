@@ -1,0 +1,8 @@
+#!/bin/bash
+
+_compile() {
+	CC="cc -O2 -Wall -Wno-deprecated-declarations -Wno-unused-result"
+	
+	$CC ./AppRun.c -o AppRun
+}
+
