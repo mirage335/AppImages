@@ -21,10 +21,10 @@ script:
   - ls ../geda-gschem_*.deb | cut -d "_" -f 2 | cut -d "+" -f 1 > ../VERSION
   - cp usr/share/applications/geda-gschem.desktop gschem.desktop
   - cp ./usr/share/icons/hicolor/scalable/apps/geda-gschem.svg .
-  - #cp ./usr/share/applications/pcb.desktop pcb.desktop
-  - #cp ./usr/share/icons/hicolor/scalable/apps/pcb.svg .
+  - cp ./usr/share/applications/pcb.desktop pcb.desktop
+  - cp ./usr/share/icons/hicolor/scalable/apps/pcb.svg .
 
 post:
-  - #cp ../../../recipes/gEDA/AppRun ./
+  - cp ../../../recipes/gEDA/AppRun ./
 
 

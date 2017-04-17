@@ -78,6 +78,12 @@ int main(int argc, char *argv[]) {
             die("Executable not found, make sure there is a line starting with 'Exec='\n");
     } while(strncmp(line, "Exec=", 5));
     fclose(f);
+    
+    char* APPIMAGE;
+    if (APPIMAGE = getenv("APPIMAGE")) {
+      sprintf(exe, "%s", APPIMAGE);
+    }
+    
 
     // parse arguments
     bool in_quotes = 0;
