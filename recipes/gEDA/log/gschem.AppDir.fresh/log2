@@ -1,0 +1,234 @@
+;;; note: auto-compilation is enabled, set GUILE_AUTO_COMPILE=0
+;;;       or pass the --no-auto-compile argument to disable.
+;;; compiling /home/user/project/usr/share/gEDA/scheme/gschem/keymap.scm
+;;; compiling ./usr/share/guile/2.0/system/base/compile.scm
+;;; it seems ./usr/share/guile/2.0/system/base/compile.scm
+;;; is part of the compiler; skipping auto-compilation
+;;; compiling ./usr/share/guile/2.0/system/base/syntax.scm
+;;; it seems ./usr/share/guile/2.0/system/base/syntax.scm
+;;; is part of the compiler; skipping auto-compilation
+;;; compiling ./usr/share/guile/2.0/system/base/language.scm
+;;; it seems ./usr/share/guile/2.0/system/base/language.scm
+;;; is part of the compiler; skipping auto-compilation
+;;; compiling ./usr/share/guile/2.0/system/base/message.scm
+;;; it seems ./usr/share/guile/2.0/system/base/message.scm
+;;; is part of the compiler; skipping auto-compilation
+;;; compiling ./usr/share/guile/2.0/srfi/srfi-1.scm
+;;; it seems ./usr/share/guile/2.0/srfi/srfi-1.scm
+;;; is part of the compiler; skipping auto-compilation
+;;; compiling ./usr/share/guile/2.0/srfi/srfi-9.scm
+;;; it seems ./usr/share/guile/2.0/srfi/srfi-9.scm
+;;; is part of the compiler; skipping auto-compilation
+;;; compiling ./usr/share/guile/2.0/system/base/ck.scm
+;;; it seems ./usr/share/guile/2.0/system/base/ck.scm
+;;; is part of the compiler; skipping auto-compilation
+;;; compiling ./usr/share/guile/2.0/ice-9/match.scm
+;;; it seems ./usr/share/guile/2.0/ice-9/match.scm
+;;; is part of the compiler; skipping auto-compilation
+;;; compiling ./usr/share/guile/2.0/system/vm/vm.scm
+;;; it seems ./usr/share/guile/2.0/system/vm/vm.scm
+;;; is part of the compiler; skipping auto-compilation
+;;; compiling ./usr/share/guile/2.0/ice-9/regex.scm
+;;; it seems ./usr/share/guile/2.0/ice-9/regex.scm
+;;; is part of the compiler; skipping auto-compilation
+;;; compiling ./usr/share/guile/2.0/ice-9/optargs.scm
+;;; it seems ./usr/share/guile/2.0/ice-9/optargs.scm
+;;; is part of the compiler; skipping auto-compilation
+;;; compiling ./usr/share/guile/2.0/system/base/pmatch.scm
+;;; it seems ./usr/share/guile/2.0/system/base/pmatch.scm
+;;; is part of the compiler; skipping auto-compilation
+;;; compiling ./usr/share/guile/2.0/ice-9/receive.scm
+;;; it seems ./usr/share/guile/2.0/ice-9/receive.scm
+;;; is part of the compiler; skipping auto-compilation
+;;; compiling ./usr/share/guile/2.0/language/objcode/spec.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/objcode/spec.scm failed:
+;;; ERROR: no such language objcode
+;;; compiling ./usr/share/guile/2.0/system/vm/objcode.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/system/vm/objcode.scm failed:
+;;; ERROR: no such language objcode
+;;; compiling ./usr/share/guile/2.0/system/base/target.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/system/base/target.scm failed:
+;;; ERROR: no such language objcode
+;;; compiling ./usr/share/guile/2.0/system/foreign.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/system/foreign.scm failed:
+;;; ERROR: no such language objcode
+;;; compiling ./usr/share/guile/2.0/srfi/srfi-9/gnu.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/srfi/srfi-9/gnu.scm failed:
+;;; ERROR: no such language objcode
+;;; compiling ./usr/share/guile/2.0/system/vm/program.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/system/vm/program.scm failed:
+;;; ERROR: no such language objcode
+;;; compiling ./usr/share/guile/2.0/system/vm/instruction.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/system/vm/instruction.scm failed:
+;;; ERROR: no such language objcode
+;;; compiling ./usr/share/guile/2.0/srfi/srfi-26.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/srfi/srfi-26.scm failed:
+;;; ERROR: no such language objcode
+;;; compiling ./usr/share/guile/2.0/language/scheme/spec.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/scheme/spec.scm failed:
+;;; ERROR: no such language scheme
+;;; compiling ./usr/share/guile/2.0/language/scheme/compile-tree-il.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/scheme/compile-tree-il.scm failed:
+;;; ERROR: no such language scheme
+;;; compiling ./usr/share/guile/2.0/language/tree-il.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/tree-il.scm failed:
+;;; ERROR: no such language scheme
+;;; compiling ./usr/share/guile/2.0/srfi/srfi-11.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/srfi/srfi-11.scm failed:
+;;; ERROR: no such language scheme
+;;; compiling ./usr/share/guile/2.0/language/scheme/decompile-tree-il.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/scheme/decompile-tree-il.scm failed:
+;;; ERROR: no such language scheme
+;;; compiling ./usr/share/guile/2.0/ice-9/vlist.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/ice-9/vlist.scm failed:
+;;; ERROR: no such language scheme
+;;; compiling ./usr/share/guile/2.0/ice-9/format.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/ice-9/format.scm failed:
+;;; ERROR: no such language scheme
+;;; compiling ./usr/share/guile/2.0/ice-9/i18n.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/ice-9/i18n.scm failed:
+;;; ERROR: no such language scheme
+;;; compiling ./usr/share/guile/2.0/ice-9/pretty-print.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/ice-9/pretty-print.scm failed:
+;;; ERROR: no such language scheme
+;;; compiling ./usr/share/guile/2.0/language/tree-il/spec.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/tree-il/spec.scm failed:
+;;; ERROR: no such language tree-il
+;;; compiling ./usr/share/guile/2.0/language/glil.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/glil.scm failed:
+;;; ERROR: no such language tree-il
+;;; compiling ./usr/share/guile/2.0/language/tree-il/compile-glil.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/tree-il/compile-glil.scm failed:
+;;; ERROR: no such language tree-il
+;;; compiling ./usr/share/guile/2.0/language/tree-il/optimize.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/tree-il/optimize.scm failed:
+;;; ERROR: no such language tree-il
+;;; compiling ./usr/share/guile/2.0/language/tree-il/primitives.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/tree-il/primitives.scm failed:
+;;; ERROR: no such language tree-il
+;;; compiling ./usr/share/guile/2.0/srfi/srfi-16.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/srfi/srfi-16.scm failed:
+;;; ERROR: no such language tree-il
+;;; compiling ./usr/share/guile/2.0/language/tree-il/peval.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/tree-il/peval.scm failed:
+;;; ERROR: no such language tree-il
+;;; compiling ./usr/share/guile/2.0/language/tree-il/effects.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/tree-il/effects.scm failed:
+;;; ERROR: no such language tree-il
+;;; compiling ./usr/share/guile/2.0/ice-9/control.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/ice-9/control.scm failed:
+;;; ERROR: no such language tree-il
+;;; compiling ./usr/share/guile/2.0/language/tree-il/cse.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/tree-il/cse.scm failed:
+;;; ERROR: no such language tree-il
+;;; compiling ./usr/share/guile/2.0/language/tree-il/fix-letrec.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/tree-il/fix-letrec.scm failed:
+;;; ERROR: no such language tree-il
+;;; compiling ./usr/share/guile/2.0/language/tree-il/debug.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/tree-il/debug.scm failed:
+;;; ERROR: no such language tree-il
+;;; compiling ./usr/share/guile/2.0/language/tree-il/canonicalize.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/tree-il/canonicalize.scm failed:
+;;; ERROR: no such language tree-il
+;;; compiling ./usr/share/guile/2.0/language/tree-il/analyze.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/tree-il/analyze.scm failed:
+;;; ERROR: no such language tree-il
+;;; compiling ./usr/share/guile/2.0/language/glil/spec.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/glil/spec.scm failed:
+;;; ERROR: no such language glil
+;;; compiling ./usr/share/guile/2.0/language/glil/compile-assembly.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/glil/compile-assembly.scm failed:
+;;; ERROR: no such language glil
+;;; compiling ./usr/share/guile/2.0/language/assembly.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/assembly.scm failed:
+;;; ERROR: no such language glil
+;;; compiling ./usr/share/guile/2.0/language/assembly/spec.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/assembly/spec.scm failed:
+;;; ERROR: no such language assembly
+;;; compiling ./usr/share/guile/2.0/language/assembly/compile-bytecode.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/assembly/compile-bytecode.scm failed:
+;;; ERROR: no such language assembly
+;;; compiling ./usr/share/guile/2.0/language/assembly/decompile-bytecode.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/assembly/decompile-bytecode.scm failed:
+;;; ERROR: no such language assembly
+;;; compiling ./usr/share/guile/2.0/language/bytecode/spec.scm
+;;; WARNING: compilation of ./usr/share/guile/2.0/language/bytecode/spec.scm failed:
+;;; ERROR: no such language bytecode
+;;; compiling /home/user/project/usr/share/gEDA/scheme/gschem/core/gettext.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/gEDA/scheme/gschem/core/gettext.scm.go
+;;; compiling /home/user/project/usr/share/gEDA/scheme/gschem/hook.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/gEDA/scheme/gschem/hook.scm.go
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/gEDA/scheme/gschem/keymap.scm.go
+;;; compiling /home/user/project/usr/share/gEDA/scheme/gschem/action.scm
+;;; compiling /home/user/project/usr/share/gEDA/scheme/gschem/window.scm
+;;; compiling /home/user/project/usr/share/gEDA/scheme/geda/page.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/gEDA/scheme/geda/page.scm.go
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/gEDA/scheme/gschem/window.scm.go
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/gEDA/scheme/gschem/action.scm.go
+;;; compiling /home/user/project/usr/share/gEDA/scheme/gschem/builtins.scm
+;;; compiling /home/user/project/usr/share/gEDA/scheme/geda/object.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/gEDA/scheme/geda/object.scm.go
+;;; compiling /home/user/project/usr/share/gEDA/scheme/gschem/gschemdoc.scm
+;;; compiling /home/user/project/usr/share/gEDA/scheme/geda/os.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/gEDA/scheme/geda/os.scm.go
+;;; compiling /home/user/project/usr/share/gEDA/scheme/geda/attrib.scm
+;;; compiling /home/user/project/usr/share/gEDA/scheme/geda/core/gettext.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/gEDA/scheme/geda/core/gettext.scm.go
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/gEDA/scheme/geda/attrib.scm.go
+;;; compiling /home/user/project/usr/share/gEDA/scheme/gschem/util.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/gEDA/scheme/gschem/util.scm.go
+;;; gschem/gschemdoc.scm:151:12: warning: non-literal format string
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/gEDA/scheme/gschem/gschemdoc.scm.go
+;;; compiling /home/user/project/usr/share/gEDA/scheme/gschem/repl.scm
+;;; compiling ./usr/share/guile/2.0/system/repl/repl.scm
+;;; compiling ./usr/share/guile/2.0/system/repl/error-handling.scm
+;;; compiling ./usr/share/guile/2.0/system/vm/trap-state.scm
+;;; compiling ./usr/share/guile/2.0/system/vm/traps.scm
+;;; compiling ./usr/share/guile/2.0/system/vm/frame.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/system/vm/frame.scm.go
+;;; compiling ./usr/share/guile/2.0/system/xref.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/system/xref.scm.go
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/system/vm/traps.scm.go
+;;; compiling ./usr/share/guile/2.0/system/vm/trace.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/system/vm/trace.scm.go
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/system/vm/trap-state.scm.go
+;;; compiling ./usr/share/guile/2.0/system/repl/debug.scm
+;;; compiling ./usr/share/guile/2.0/ice-9/rdelim.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/ice-9/rdelim.scm.go
+;;; compiling ./usr/share/guile/2.0/system/vm/inspect.scm
+;;; compiling ./usr/share/guile/2.0/language/assembly/disassemble.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/language/assembly/disassemble.scm.go
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/system/vm/inspect.scm.go
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/system/repl/debug.scm.go
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/system/repl/error-handling.scm.go
+;;; compiling ./usr/share/guile/2.0/system/repl/common.scm
+;;; compiling ./usr/share/guile/2.0/ice-9/history.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/ice-9/history.scm.go
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/system/repl/common.scm.go
+;;; compiling ./usr/share/guile/2.0/system/repl/command.scm
+;;; compiling ./usr/share/guile/2.0/ice-9/session.scm
+;;; compiling ./usr/share/guile/2.0/ice-9/documentation.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/ice-9/documentation.scm.go
+;;; ./usr/share/guile/2.0/ice-9/session.scm:241:11: warning: non-literal format string
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/ice-9/session.scm.go
+;;; compiling ./usr/share/guile/2.0/ice-9/and-let-star.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/ice-9/and-let-star.scm.go
+;;; compiling ./usr/share/guile/2.0/statprof.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/statprof.scm.go
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/system/repl/command.scm.go
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/system/repl/repl.scm.go
+;;; compiling ./usr/share/guile/2.0/ice-9/threads.scm
+;;; compiling ./usr/share/guile/2.0/ice-9/futures.scm
+;;; compiling ./usr/share/guile/2.0/ice-9/q.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/ice-9/q.scm.go
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/ice-9/futures.scm.go
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/guile/2.0/ice-9/threads.scm.go
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/gEDA/scheme/gschem/repl.scm.go
+;;; compiling /home/user/project/usr/share/gEDA/scheme/gschem/selection.scm
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/gEDA/scheme/gschem/selection.scm.go
+;;; gschem/builtins.scm:398:5: warning: possibly unbound variable `gschem-msg'
+;;; compiled /home/user/.cache/guile/ccache/2.0-LE-8-2.0/home/user/project/usr/share/gEDA/scheme/gschem/builtins.scm.go
+
+(gschem:1): Gtk-WARNING **: Attempting to store changes into `/home/user/.local/share/recently-used.xbel', but failed: Failed to create file '/home/user/.local/share/recently-used.xbel.1H66YY': No such file or directory
+
+(gschem:1): Gtk-WARNING **: Attempting to set the permissions of `/home/user/.local/share/recently-used.xbel', but failed: No such file or directory

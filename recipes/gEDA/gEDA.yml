@@ -1,5 +1,6 @@
 app: gschem
-binpatch: true
+#binpatch: true
+union: true
 
 ingredients:
   packages:
@@ -10,6 +11,7 @@ ingredients:
    - extra-xdg-menus
    - guile-2.0-libs
    - libgeda-common
+   - coreutils
   dist: xenial
   sources: 
     - deb http://archive.ubuntu.com/ubuntu/ xenial main universe

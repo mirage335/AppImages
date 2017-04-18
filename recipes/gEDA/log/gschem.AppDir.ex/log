@@ -1,0 +1,85 @@
+rm: cannot remove './usr/share/guile/2.0/ice-9/./usr': No such file or directory
+;;; note: auto-compilation is enabled, set GUILE_AUTO_COMPILE=0
+;;;       or pass the --no-auto-compile argument to disable.
+;;; compiling /usr/share/gEDA/scheme/gschem/keymap.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/gschem/keymap.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/gschem/core/gettext.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/gschem/core/gettext.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/gschem/hook.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/gschem/hook.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/gschem/action.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/gschem/action.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/gschem/window.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/gschem/window.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/geda/page.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/geda/page.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/gschem/builtins.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/gschem/builtins.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/geda/object.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/geda/object.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/gschem/gschemdoc.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/gschem/gschemdoc.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/geda/os.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/geda/os.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/geda/attrib.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/geda/attrib.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/geda/core/gettext.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/geda/core/gettext.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/gschem/util.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/gschem/util.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/gschem/repl.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/gschem/repl.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/gschem/selection.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/gschem/selection.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/geda.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/geda.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/geda/log-rotate.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/geda/log-rotate.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/geda-deprecated-config.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/geda-deprecated-config.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/geda/config.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/geda/config.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/geda/deprecated.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/geda/deprecated.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/color-map.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/color-map.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/gschem/deprecated.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/gschem/deprecated.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/gschem/attrib.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/gschem/attrib.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/default-attrib-positions.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/default-attrib-positions.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/auto-place-attribs.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/auto-place-attribs.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+;;; compiling /usr/share/gEDA/scheme/auto-place-netname.scm
+;;; WARNING: compilation of /usr/share/gEDA/scheme/auto-place-netname.scm failed:
+;;; ERROR: In procedure canonicalize-path: No such file or directory
+
+(gschem:1): Gtk-WARNING **: Attempting to store changes into `/home/user/.local/share/recently-used.xbel', but failed: Failed to create file '/home/user/.local/share/recently-used.xbel.6J2WYY': No such file or directory
+
+(gschem:1): Gtk-WARNING **: Attempting to set the permissions of `/home/user/.local/share/recently-used.xbel', but failed: No such file or directory
