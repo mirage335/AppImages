@@ -5,6 +5,11 @@ union: true
 ingredients:
   packages:
    - geda
+   - geda-gattrib
+   - geda-gsymcheck
+   - geda-examples
+   - geda-utils
+   - gerbv
    - pcb
    - hicolor-icon-theme
    - gnome-icon-theme
@@ -27,6 +32,7 @@ script:
   - cp ./usr/share/icons/hicolor/scalable/apps/pcb.svg .
 
 post:
-  - cp ../../../recipes/gEDA/AppRun ./
+  - #cp ../../../recipes/gEDA/AppRun ./
+  - ln -s ./pcb-gtk ./usr/bin/pcb
 
 
